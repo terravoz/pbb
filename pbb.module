@@ -12,14 +12,13 @@ function _pbb_save_idea($idea_category, $idea_location, $idea_recording, $caller
   $node->language = 'und';
   $node->status = 1;
   $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
-  $node->field_caller_id['und'][0]['value'] = $caller_number;
+  $node->field_caller_id['und'][0]['value'] = (string)$caller_number;
   // create the node
   node_save($node);
   $nid = $node->nid;
   watchdog('debug', 'Idea saved '.$nid);
 
   $server = Voipserver::getServer($source);
-  //$call = VoipCall::load($cid);
   $args = array(
     'nid' => $nid,
   );

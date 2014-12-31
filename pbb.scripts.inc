@@ -25,7 +25,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       break;
     case 'pbb_welcome_script':
       $script = new VoipScript('pbb_welcome_script');
-      $options['voice'] = 'pbb';
+      $options['voice'] = 'pbb-english';
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
@@ -153,10 +153,10 @@ To go back to the main menu, press the pound key. ");
       $script->addSay(v('Intro message for idea collection. '));
       $script->addLabel('options_menu');
       $prompt = v("Great! Remember, ideas have to be for physical projects to improve the city of Boston.
-  Ideas shouldn’t be for programs and services.
-  If your idea is for Schools & Education projects, press 1,
-  if it is for Streets & Transportation & Community Safety projects, press 2,
-  if it is for Arts & Culture projects, press 3, if it is Parks & Environment projects press 4,
+  Ideas shouldn't be for programs and services.
+  If your idea is for Schools and Education projects, press 1,
+  if it is for Streets and Transportation and Community Safety projects, press 2,
+  if it is for Arts and Culture projects, press 3, if it is Parks and Environment projects press 4,
   if it is for Community Centers projects press 5, if it is for Libraries projects press 6.
   To hear these options again, press 8.");
       $timeout = 5;
