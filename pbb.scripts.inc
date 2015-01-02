@@ -10,7 +10,7 @@
  */
 function pbb_voipscript_get_script_names() {
   $script_names[] = 'pbb_welcome_script';
-  $script_names[] = 'pbb_sms_handler_script';
+  $script_names[] = 'pbb_sms_add_idea';
   return $script_names;
 }
 
@@ -32,10 +32,10 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addLabel('options_menu');
 
       $p_options_menu = v("Hi, thank you for calling Youth Lead the Change!
-      If you would like to hear more about Youth Lead the Change and Participatory Budgeting, press 1,
-      if you would like to enroll in our contact list for text message updates, press 2,
-      if you would like to contribute your project idea to improve the city of Boston, press 3,
-      or if you would like to be redirected to our Boston Youth Lead the Change headquarters, press STAR.");
+      If you would like to hear more about Youth Lead the Change and Participatory Budgeting, press 1.
+      If you would like to enroll in our contact list for text message updates, press 2.
+      If you would like to contribute your project idea to improve the city of Boston, press 3.
+      If you would like to be redirected to our Boston Youth Lead the Change headquarters, press STAR.");
 
       $input_options = array(
         //'1' => 'audio_announcements',
@@ -111,6 +111,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
         // create the node
         node_save($node);
       }
+      //@todo: send welcome message
       /*$text = variable_get('claro_sms_help',
         'Welcome to The PBB App! To JOIN and receive weekly text messages, text the letter "J". To STOP receiving text messages, text "S". For HELP, text "H". Msg & data rates may apply.');
 
@@ -175,9 +176,6 @@ To go back to the main menu, press the pound key. ");
 
       //Record location
       $script->addLabel('start_recording_location');
-      // prepare the call to finish processing the recording even in case of hang up
-      //$script->addSet('voipscript_hangup_callback', '_pbb_record_on_hang_up');
-      //$script->addLog('About to start recording (%voipscript_hangup_callback)');
 
       $prompt = t("Now please name the neighborhood and the streets or intersection for which your idea applies. When you are finished, press #. ");
       $timeout = 5;
@@ -187,15 +185,10 @@ To go back to the main menu, press the pound key. ");
 
       $script->addRecord($prompt, $timeout, $end_key, $max_length, $format);
 
-      //$script->addLog('Back from recording (%voipscript_hangup_callback)');
-      // reset the hang up handler
-      //$script->addSet('voipscript_hangup_callback', '');
       $script->addSet('idea_location', '%recording_public_url');
 
       //Record idea
       $script->addLabel('start_recording_idea');
-      // prepare the call to finish processing the recording even in case of hang up
-      //$script->addSet('voipscript_hangup_callback', '_pbb_record_on_hang_up');
       $script->addLog('About to start recording (%voipscript_hangup_callback)');
 
       $prompt = t("Now please say describe your idea in up to 45 seconds. When you are finished, press #. ");
@@ -205,12 +198,7 @@ To go back to the main menu, press the pound key. ");
       $format = 'mp3';
 
       $script->addRecord($prompt, $timeout, $end_key, $max_length, $format);
-
-      //$script->addLog('Back from recording (%voipscript_hangup_callback)');
-      // reset the hang up handler
-      //$script->addSet('voipscript_hangup_callback', '');
       $script->addSet('idea_recording', '%recording_public_url');
-
 
       $script->addSet('callback_result',
         '^_pbb_save_idea(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
@@ -218,9 +206,69 @@ To go back to the main menu, press the pound key. ");
       $script->addLabel('end call');
       $script->addSay(v('Bye bye.'));
       $script->addHangup();
+      break;
+    case 'pbb_sms_add_idea':
+      $script = new VoipScript('pbb_sms_add_idea');
+      // log the sms
+      $log_msg = t("SMS from %caller_number on @date (id: %call_id)",
+        array('@date' => format_date(time(), 'custom', 'D, m/d/Y - H:i:s')));
+      $script->addLog($log_msg, 'pbb');
+
+      // below was the only way to avoid problems with special characters in the text message
+      $options['text'] = '%inbound_text_contents';
+      $options['caller_number'] = '%caller_number';
+      $options['dest_number'] = '%dest_number';
+      $options['call_id'] = '%cid';
+      $options['source'] = '%source';
+      $script->addGosub('pbb_sms_process_request_script', $options);
+      break;
+    case 'pbb_sms_process_request_script':
+      //Helper script to process SMS request
+      $script = new VoipScript('pbb_sms_process_request_script');
+
+      $script->addLabel('start');
+      $script->addSendText("Please choose idea category:
+      1=Schools & Education
+2=Streets & Transportation & Community Safety
+3=Arts & Culture
+4=Parks & Environment
+5=Community Centers
+6=|Libraries");
+      $script->addHangup('resume');
+
+      $script->addLabel('category');
+      $script->addGotoIf('setcategory', "^%inbound_text_contents >= '1' && ^%inbound_text_contents <= '6'");
+      $script->addSendText('Oops! That option is invalid. ');
+      $script->addHangup('resume');
+
+      $script->addLabel('setcategory');
+      $script->addSet('idea_category', '%inbound_text_contents');
+
+      //location
+      $script->addLabel('location');
+      $script->addSendText("Now please name the neighborhood and the streets or intersection for which your idea applies.");
+      $script->addHangup('resume');
+
+      $script->addSet('idea_location', '%inbound_text_contents');
+
+      //idea description
+      $script->addLabel('idea_description');
+
+      $script->addSendText("Now please describe your idea. ");
+      $script->addHangup('resume');
+
+      $script->addSet('idea_recording', '%inbound_text_contents');
+
+      $script->addSet('callback_result',
+        '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
+
+      $script->addLabel('end call');
+      $script->addSendText('Your idea is saved. Thank you.');
+      $script->addHangup();
 
       break;
   }
 
   return $script;
 }
+
