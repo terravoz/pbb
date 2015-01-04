@@ -93,7 +93,8 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 
       $signup_number = VoipCall::NormalizeNumber($options['signup_number']);
       watchdog('debug', 'signup number '.$signup_number);
-      $phone_number = callblast_alters_get_phone_number($signup_number);
+      //$phone_number = callblast_alters_get_phone_number($signup_number);
+      $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
 
       if ($phone_number) {
         //Number already exists
@@ -272,3 +273,44 @@ To go back to the main menu, press the pound key. ");
   return $script;
 }
 
+function pbb_sms_collect_idea(&$script, $options) {
+  $script->addLabel('start');
+  $script->addSendText("Please choose idea category:
+      1=Schools & Education
+2=Streets & Transportation & Community Safety
+3=Arts & Culture
+4=Parks & Environment
+5=Community Centers
+6=|Libraries");
+  $script->addHangup('resume');
+
+  $script->addLabel('category');
+  $script->addGotoIf('setcategory', "^%inbound_text_contents >= '1' && ^%inbound_text_contents <= '6'");
+  $script->addSendText('Oops! That option is invalid. ');
+  $script->addHangup('resume');
+
+  $script->addLabel('setcategory');
+  $script->addSet('idea_category', '%inbound_text_contents');
+
+  //location
+  $script->addLabel('location');
+  $script->addSendText("Now please name the neighborhood and the streets or intersection for which your idea applies.");
+  $script->addHangup('resume');
+
+  $script->addSet('idea_location', '%inbound_text_contents');
+
+  //idea description
+  $script->addLabel('idea_description');
+
+  $script->addSendText("Now please describe your idea. ");
+  $script->addHangup('resume');
+
+  $script->addSet('idea_recording', '%inbound_text_contents');
+
+  $script->addSet('callback_result',
+    '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
+
+  $script->addLabel('end call');
+  $script->addSendText('Your idea is saved. Thank you.');
+  $script->addHangup();
+}

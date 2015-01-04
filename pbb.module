@@ -49,3 +49,17 @@ function _pbb_save_idea_recording($file, $recording_public_url, $args) {
   node_save($node);
   return $node;
 }
+
+/**
+ * Implementation of hook_sms_actions().
+ */
+function pbb_sms_actions() {
+  $sms_actions = array(
+    'pbb_collect_idea' => array(
+      'callback' => 'pbb_sms_collect_idea',
+      'title' => 'Collect PBB ideas via SMS',
+      'description' => 'Collect PBB ideas via SMS',
+    ),
+  );
+  return $sms_actions;
+}
