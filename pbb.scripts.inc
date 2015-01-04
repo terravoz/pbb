@@ -258,10 +258,10 @@ To go back to the main menu, press the pound key. ");
       $script->addSendText("Now please describe your idea. ");
       $script->addHangup('resume');
 
-      $script->addSet('idea_recording', '%inbound_text_contents');
+      $script->addSet('idea_description', '%inbound_text_contents');
 
       $script->addSet('callback_result',
-        '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
+        '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_description, %caller_number)');
 
       $script->addLabel('end call');
       $script->addSendText('Your idea is saved. Thank you.');
@@ -285,6 +285,8 @@ function pbb_sms_collect_idea(&$script, $options) {
   $script->addHangup('resume');
 
   $script->addLabel('category');
+  //@todo: Invalid PHP expression: 2 >= '1' && ^2 <= '6'
+
   $script->addGotoIf('setcategory', "^%inbound_text_contents >= '1' && ^%inbound_text_contents <= '6'");
   $script->addSendText('Oops! That option is invalid. ');
   $script->addHangup('resume');

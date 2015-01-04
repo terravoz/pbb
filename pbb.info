@@ -4,7 +4,7 @@ name = "PBB custom module"
 dependencies[] = voip
 dependencies[] = voipnumber
 dependencies[] = audio_announcements
-dependencies[] = callblast_alters
+dependencies[] = sms_actions
 package = "other"
 project = "other"
 

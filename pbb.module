@@ -50,6 +50,23 @@ function _pbb_save_idea_recording($file, $recording_public_url, $args) {
   return $node;
 }
 
+function _pbb_save_idea_sms($idea_category, $idea_location, $idea_description, $caller_number) {
+  watchdog('debug', "in _pbb_save_idea $idea_category, $idea_location, $idea_description, $caller_number");
+
+  $node->type = 'ideas';
+  $node->title = $idea_category.' at '.REQUEST_TIME;
+  $node->language = 'und';
+  $node->status = 1;
+  $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
+  $node->field_caller_id['und'][0]['value'] = (string)$caller_number;
+  $node->field_idea_location['und'][0]['value'] = $idea_location;
+  $node->field_idea_description['und'][0]['value'] = $idea_description;
+  // create the node
+  node_save($node);
+  $nid = $node->nid;
+  watchdog('debug', 'Idea saved '.$nid);
+}
+
 /**
  * Implementation of hook_sms_actions().
  */
