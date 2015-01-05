@@ -222,7 +222,7 @@ To go back to the main menu, press the pound key. ");
       $script->addLabel('category');
       //@todo: Invalid PHP expression: 2 >= '1' && ^2 <= '6'
 
-      $script->addGotoIf('setcategory', "^%inbound_text_contents >= '1' && ^%inbound_text_contents <= '6'");
+      $script->addGotoIf('setcategory', "^%inbound_text_contents >= 1 && ^%inbound_text_contents <= 6");
       $script->addSendText('Oops! That option is invalid. ');
       $script->addHangup('resume');
 
