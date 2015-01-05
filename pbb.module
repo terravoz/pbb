@@ -18,7 +18,7 @@ function _pbb_save_idea($idea_category, $idea_location, $idea_recording, $caller
   $nid = $node->nid;
   watchdog('debug', 'Idea saved '.$nid);
 
-  $server = Voipserver::getServer($source);
+  $server = VoipServer::getServer($source);
   $args = array(
     'nid' => $nid,
   );
@@ -73,7 +73,7 @@ function _pbb_save_idea_sms($idea_category, $idea_location, $idea_description, $
 function pbb_sms_actions() {
   $sms_actions = array(
     'pbb_collect_idea' => array(
-      'callback' => 'pbb_sms_collect_idea',
+      'script' => 'pbb_sms_collect_idea',
       'title' => 'Collect PBB ideas via SMS',
       'description' => 'Collect PBB ideas via SMS',
     ),

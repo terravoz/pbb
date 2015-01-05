@@ -10,7 +10,6 @@
  */
 function pbb_voipscript_get_script_names() {
   $script_names[] = 'pbb_welcome_script';
-  $script_names[] = 'pbb_sms_add_idea';
   return $script_names;
 }
 
@@ -208,25 +207,8 @@ To go back to the main menu, press the pound key. ");
       $script->addSay(v('Bye bye.'));
       $script->addHangup();
       break;
-    case 'pbb_sms_add_idea':
-      $script = new VoipScript('pbb_sms_add_idea');
-      // log the sms
-      $log_msg = t("SMS from %caller_number on @date (id: %call_id)",
-        array('@date' => format_date(time(), 'custom', 'D, m/d/Y - H:i:s')));
-      $script->addLog($log_msg, 'pbb');
-
-      // below was the only way to avoid problems with special characters in the text message
-      $options['text'] = '%inbound_text_contents';
-      $options['caller_number'] = '%caller_number';
-      $options['dest_number'] = '%dest_number';
-      $options['call_id'] = '%cid';
-      $options['source'] = '%source';
-      $script->addGosub('pbb_sms_process_request_script', $options);
-      break;
-    case 'pbb_sms_process_request_script':
-      //Helper script to process SMS request
-      $script = new VoipScript('pbb_sms_process_request_script');
-
+    case 'pbb_sms_collect_idea':
+      $script = new VoipScript('pbb_sms_collect_idea');
       $script->addLabel('start');
       $script->addSendText("Please choose idea category:
       1=Schools & Education
@@ -238,6 +220,8 @@ To go back to the main menu, press the pound key. ");
       $script->addHangup('resume');
 
       $script->addLabel('category');
+      //@todo: Invalid PHP expression: 2 >= '1' && ^2 <= '6'
+
       $script->addGotoIf('setcategory', "^%inbound_text_contents >= '1' && ^%inbound_text_contents <= '6'");
       $script->addSendText('Oops! That option is invalid. ');
       $script->addHangup('resume');
@@ -258,21 +242,21 @@ To go back to the main menu, press the pound key. ");
       $script->addSendText("Now please describe your idea. ");
       $script->addHangup('resume');
 
-      $script->addSet('idea_description', '%inbound_text_contents');
+      $script->addSet('idea_recording', '%inbound_text_contents');
 
       $script->addSet('callback_result',
-        '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_description, %caller_number)');
+        '^_pbb_save_idea_sms(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
 
       $script->addLabel('end call');
       $script->addSendText('Your idea is saved. Thank you.');
       $script->addHangup();
-
       break;
   }
 
   return $script;
 }
 
+/*
 function pbb_sms_collect_idea(&$script, $options) {
   $script->addLabel('start');
   $script->addSendText("Please choose idea category:
@@ -315,4 +299,4 @@ function pbb_sms_collect_idea(&$script, $options) {
   $script->addLabel('end call');
   $script->addSendText('Your idea is saved. Thank you.');
   $script->addHangup();
-}
+}*/
