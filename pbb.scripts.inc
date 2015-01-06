@@ -163,7 +163,6 @@ To go back to the main menu, press the pound key. ");
       $num_digits = 1;
       $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
 
-      //$script->addGotoIf('setcategory', "^%input_digits >= '1' && ^%input_digits <= '6'");
       $script->addGotoIf('setcategory', "^_pbb_validate_idea_category(%input_digits)");
       $script->addGotoIf('options_menu', "^%input_digits == '8'");
 
@@ -219,9 +218,7 @@ To go back to the main menu, press the pound key. ");
       $script->addHangup('resume');
 
       $script->addLabel('category');
-      //@todo: Invalid PHP expression: 2 >= '1' && ^2 <= '6'
-      //@todo: change to validate function
-      $script->addGotoIf('setcategory', "^%inbound_text_contents >= 1 && ^%inbound_text_contents <= 6");
+      $script->addGotoIf('setcategory', "^_pbb_validate_idea_category(%inbound_text_contents)");
       $script->addSendText('Oops! That option is invalid. ');
       $script->addHangup('resume');
 
