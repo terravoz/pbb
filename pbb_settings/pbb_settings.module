@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the PBB Settings feature.
+ */
+
+include_once 'pbb_settings.features.inc';
