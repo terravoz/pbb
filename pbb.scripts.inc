@@ -111,11 +111,9 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
         // create the node
         node_save($node);
       }
-      //@todo: send welcome message
-      /*$text = variable_get('claro_sms_help',
-        'Welcome to The PBB App! To JOIN and receive weekly text messages, text the letter "J". To STOP receiving text messages, text "S". For HELP, text "H". Msg & data rates may apply.');
-
-      $script->addSendText($text, $signup_number);*/
+      //send welcome message
+      $text = variable_get('sms_actions_sms_welcome', 'Welcome to Participatory Budgeting Boston.');
+      $script->addSendText($text, $signup_number);
       $script->addLabel('message');
       $script->addSay(v('Great! Your number has been successfully added to our text message reminders.
       You will now receive reminders to contribute ideas and join Youth Lead the Change events!'));
