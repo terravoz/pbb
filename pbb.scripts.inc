@@ -193,7 +193,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 3=Arts & Culture
 4=Parks & Environment
 5=Community Centers
-6=|Libraries");
+6=Libraries");
       $script->addHangup('resume');
 
       $script->addLabel('category');
