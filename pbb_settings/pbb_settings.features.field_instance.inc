@@ -267,6 +267,51 @@ function pbb_settings_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-ideas-field_idea_type'
+  $field_instances['node-ideas-field_idea_type'] = array(
+    'bundle' => 'ideas',
+    'default_value' => array(
+      0 => array(
+        'value' => 'Voice',
+      ),
+    ),
+    'default_value_function' => '',
+    'default_value_php' => '',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_idea_type',
+    'label' => 'Idea type',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'maxlength_js_label' => 'Content limited to @limit characters, remaining: <strong>@remaining</strong>',
+      ),
+      'type' => 'options_select',
+      'weight' => 3,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Caller id');
@@ -275,6 +320,7 @@ function pbb_settings_field_default_field_instances() {
   t('Idea description audio');
   t('Idea location');
   t('Idea location audio');
+  t('Idea type');
 
   return $field_instances;
 }

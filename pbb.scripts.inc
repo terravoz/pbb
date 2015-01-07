@@ -28,20 +28,20 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
+      $script->addSay(v("Hi, thank you for calling Youth Lead the Change!"));
       $script->addLabel('options_menu');
 
-      $p_options_menu = v("Hi, thank you for calling Youth Lead the Change!
-      If you would like to hear more about Youth Lead the Change and Participatory Budgeting, press 1.
-      If you would like to enroll in our contact list for text message updates, press 2.
-      If you would like to contribute your project idea to improve the city of Boston, press 3.
-      If you would like to be redirected to our Boston Youth Lead the Change headquarters, press STAR.");
+      $p_options_menu = v("To learn more about Youth Lead the Change and Participatory Budgeting, press 1.
+      To enroll in our contact list for text message updates, press 2.
+      To contribute your project idea to improve the city of Boston, press 3.
+      To be redirected to our Boston Youth Lead the Change headquarters, press 0.
+      To repeat this message, press the star key.");
 
       $input_options = array(
-        //'1' => 'audio_announcements',
-        '3' => 'propose_idea',
-        '2' => 'sms_subscription',
         '1' => 'get_information',
-        '4' => 'redirect',
+        '2' => 'sms_subscription',
+        '3' => 'propose_idea',
+        '0' => 'redirect',
         '*' => 'repeat',
         '#' => 'invalid_option',
         'i' => 'invalid_option',
@@ -66,7 +66,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addGoto('options_menu');
 
       $script->addLabel('get_information');
-      $script->addGetInput(v('Welcome to Youth Lead the Change recording'), 1);
+      $script->addGetInput(v('About YLC'), 1);
       $script->addGotoIf('sms_subscription', "^%input_digits == '2'");
       $script->addGoto('options_menu');
 
@@ -92,9 +92,8 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 
       $signup_number = VoipCall::NormalizeNumber($options['signup_number']);
       watchdog('debug', 'signup number '.$signup_number);
-      //$phone_number = callblast_alters_get_phone_number($signup_number);
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
-
+      watchdog('debug', 'voipnumber  '.print_r($phone_number,true));
       if ($phone_number) {
         //Number already exists
       }
@@ -105,7 +104,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
         $node->status = 1;
         $node->field_opt_in['und'][0]['value'] = 1; //verify
         $node->field_phone_number['und'][0]['vnid'] = $signup_number;
-        //$language = callblast_alters_number_to_lang($dest_number);
         $language = 'en';
         $node->field_language['und'][0]['value'] = $language;
         // create the node
@@ -117,54 +115,33 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addLabel('message');
       $script->addSay(v('Great! Your number has been successfully added to our text message reminders.
       You will now receive reminders to contribute ideas and join Youth Lead the Change events!'));
-
-      $script->addLabel('options_menu');
-      $p_options_menu = v("To repeat this message, press the star key.
-To go back to the main menu, press the pound key. ");
-
-      $input_options = array(
-        '*' => 'repeat',
-        '#' => 'go_back',
-        'i' => 'invalid_option',
-        't' => 'invalid_option'
-      );
-      $p_invalid_msg = v('Oops! That option is invalid. ');
-      $script->addRunIvrMenu($p_options_menu, $input_options, $p_invalid_msg);
-      $script->addGoto('%ivr_option_selected');
-
-      $script->addLabel('repeat');
-      $script->addGoto('message');
-
-      $script->addLabel('invalid_option');
-      $script->addGoto('options_menu');
-
-      $script->addLabel('go_back');
       $script->addReturn();
       break;
 
     case 'propose_idea_script':
       $script = new VoipScript('propose_idea_script');
-
       $voice =  $options['voice'];
       voipvoice_set_current_voice($voice);
 
       $script->addLabel('start');
-      $script->addSay(v('Intro message for idea collection. '));
+      $script->addSay(v('Great! Remember, ideas have to be for physical projects to improve the city of Boston.
+      Ideas should not be for programs and services. '));
       $script->addLabel('options_menu');
-      $prompt = v("Great! Remember, ideas have to be for physical projects to improve the city of Boston.
-  Ideas shouldn't be for programs and services.
-  If your idea is for Schools and Education projects, press 1,
-  if it is for Streets and Transportation and Community Safety projects, press 2,
-  if it is for Arts and Culture projects, press 3, if it is Parks and Environment projects press 4,
-  if it is for Community Centers projects press 5, if it is for Libraries projects press 6.
-  To hear these options again, press 8.");
+      $prompt = v("If your idea is for Schools and Education projects, press 1.
+  If it is for Streets and Transportation and Community Safety projects, press 2.
+  If it is for Arts and Culture projects, press 3.
+  If it is Parks and Environment projects press 4.
+  If it is for Community Centers projects press 5.
+  If it is for Libraries projects press 6.
+  To hear these options again, press the star key. To go back to the main menu, press the pound key.");
       $timeout = 5;
       $end_key = '';
       $num_digits = 1;
       $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
 
       $script->addGotoIf('setcategory', "^_pbb_validate_idea_category(%input_digits)");
-      $script->addGotoIf('options_menu', "^%input_digits == '8'");
+      $script->addGotoIf('options_menu', "^%input_digits == '*'");
+      $script->addGotoIf('go_back', "^%input_digits == '#'");
 
       $script->addSay(v('Oops! That option is invalid. '));
       $script->addGoto('options_menu');
@@ -201,9 +178,11 @@ To go back to the main menu, press the pound key. ");
       $script->addSet('callback_result',
         '^_pbb_save_idea(%idea_category, %idea_location, %idea_recording, %caller_number, %source)');
 
-      $script->addLabel('end call');
-      $script->addSay(v('Bye bye.'));
-      $script->addHangup();
+      $script->addLabel('idea_submitted');
+      $script->addSay(v('Thanks for submitting your idea to Youth Lead the Change!.'));
+
+      $script->addLabel('go_back');
+      $script->addReturn();
       break;
     case 'pbb_sms_collect_idea':
       $script = new VoipScript('pbb_sms_collect_idea');

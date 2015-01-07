@@ -15,14 +15,14 @@ function pbb_settings_views_default_views() {
   $view->description = '';
   $view->tag = 'default';
   $view->base_table = 'node';
-  $view->human_name = 'List of ideas';
+  $view->human_name = 'Ideas collected';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'List of ideas submitted';
+  $handler->display->display_options['title'] = 'Ideas collected';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'role';
   $handler->display->display_options['access']['role'] = array(
@@ -108,6 +108,61 @@ function pbb_settings_views_default_views() {
   $handler->display->display_options['fields']['field_idea_category']['table'] = 'field_data_field_idea_category';
   $handler->display->display_options['fields']['field_idea_category']['field'] = 'field_idea_category';
   $handler->display->display_options['fields']['field_idea_category']['label'] = 'Category';
+  /* Field: Content: Idea type */
+  $handler->display->display_options['fields']['field_idea_type']['id'] = 'field_idea_type';
+  $handler->display->display_options['fields']['field_idea_type']['table'] = 'field_data_field_idea_type';
+  $handler->display->display_options['fields']['field_idea_type']['field'] = 'field_idea_type';
+  /* Field: Content: Idea description */
+  $handler->display->display_options['fields']['field_idea_description']['id'] = 'field_idea_description';
+  $handler->display->display_options['fields']['field_idea_description']['table'] = 'field_data_field_idea_description';
+  $handler->display->display_options['fields']['field_idea_description']['field'] = 'field_idea_description';
+  $handler->display->display_options['fields']['field_idea_description']['label'] = '';
+  $handler->display->display_options['fields']['field_idea_description']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_idea_description']['element_label_colon'] = FALSE;
+  /* Field: Content: Idea location */
+  $handler->display->display_options['fields']['field_idea_location']['id'] = 'field_idea_location';
+  $handler->display->display_options['fields']['field_idea_location']['table'] = 'field_data_field_idea_location';
+  $handler->display->display_options['fields']['field_idea_location']['field'] = 'field_idea_location';
+  $handler->display->display_options['fields']['field_idea_location']['label'] = '';
+  $handler->display->display_options['fields']['field_idea_location']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_idea_location']['element_label_colon'] = FALSE;
+  /* Field: Content: Idea description audio */
+  $handler->display->display_options['fields']['field_idea_description_audio']['id'] = 'field_idea_description_audio';
+  $handler->display->display_options['fields']['field_idea_description_audio']['table'] = 'field_data_field_idea_description_audio';
+  $handler->display->display_options['fields']['field_idea_description_audio']['field'] = 'field_idea_description_audio';
+  $handler->display->display_options['fields']['field_idea_description_audio']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_idea_description_audio']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_idea_description_audio']['type'] = 'audiofield_nodownload';
+  /* Field: Content: Idea location audio */
+  $handler->display->display_options['fields']['field_idea_location_audio']['id'] = 'field_idea_location_audio';
+  $handler->display->display_options['fields']['field_idea_location_audio']['table'] = 'field_data_field_idea_location_audio';
+  $handler->display->display_options['fields']['field_idea_location_audio']['field'] = 'field_idea_location_audio';
+  $handler->display->display_options['fields']['field_idea_location_audio']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_idea_location_audio']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_idea_location_audio']['type'] = 'audiofield_nodownload';
+  /* Field: Views: Views Conditional */
+  $handler->display->display_options['fields']['views_conditional_1']['id'] = 'views_conditional_1';
+  $handler->display->display_options['fields']['views_conditional_1']['table'] = 'views_conditional';
+  $handler->display->display_options['fields']['views_conditional_1']['field'] = 'views_conditional';
+  $handler->display->display_options['fields']['views_conditional_1']['label'] = 'Location';
+  $handler->display->display_options['fields']['views_conditional_1']['if'] = 'field_idea_type';
+  $handler->display->display_options['fields']['views_conditional_1']['condition'] = '1';
+  $handler->display->display_options['fields']['views_conditional_1']['equalto'] = 'Voice';
+  $handler->display->display_options['fields']['views_conditional_1']['then'] = '[field_idea_location_audio]';
+  $handler->display->display_options['fields']['views_conditional_1']['or'] = '[field_idea_location]';
+  $handler->display->display_options['fields']['views_conditional_1']['strip_tags'] = 0;
+  /* Field: Views: Views Conditional */
+  $handler->display->display_options['fields']['views_conditional']['id'] = 'views_conditional';
+  $handler->display->display_options['fields']['views_conditional']['table'] = 'views_conditional';
+  $handler->display->display_options['fields']['views_conditional']['field'] = 'views_conditional';
+  $handler->display->display_options['fields']['views_conditional']['label'] = 'Description';
+  $handler->display->display_options['fields']['views_conditional']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['views_conditional']['if'] = 'field_idea_type';
+  $handler->display->display_options['fields']['views_conditional']['condition'] = '1';
+  $handler->display->display_options['fields']['views_conditional']['equalto'] = 'Voice';
+  $handler->display->display_options['fields']['views_conditional']['then'] = '[field_idea_description_audio]';
+  $handler->display->display_options['fields']['views_conditional']['or'] = '[field_idea_description]';
+  $handler->display->display_options['fields']['views_conditional']['strip_tags'] = 0;
   /* Field: Content: Link */
   $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
   $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
@@ -151,14 +206,16 @@ function pbb_settings_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['path'] = 'list-ideas-submitted';
-  $handler->display->display_options['menu']['weight'] = '0';
-  $handler->display->display_options['menu']['name'] = 'devel';
+  $handler->display->display_options['path'] = 'ideas-collected';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'Ideas collected';
+  $handler->display->display_options['menu']['weight'] = '1';
+  $handler->display->display_options['menu']['name'] = 'main-menu';
   $handler->display->display_options['menu']['context'] = 0;
   $handler->display->display_options['menu']['context_only_inline'] = 0;
   $translatables['list_of_ideas'] = array(
     t('Master'),
-    t('List of ideas submitted'),
+    t('Ideas collected'),
     t('more'),
     t('Apply'),
     t('Reset'),
@@ -175,6 +232,11 @@ function pbb_settings_views_default_views() {
     t('Date submitted'),
     t('Submitted by'),
     t('Category'),
+    t('Idea type'),
+    t('Idea description audio'),
+    t('Idea location audio'),
+    t('Location'),
+    t('Description'),
     t('View'),
     t('Edit'),
     t('Delete'),

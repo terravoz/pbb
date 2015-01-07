@@ -12,7 +12,8 @@ function _pbb_save_idea($idea_category, $idea_location, $idea_recording, $caller
   $node->language = 'und';
   $node->status = 1;
   $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
-  $node->field_caller_id['und'][0]['value'] = (string)$caller_number;
+  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string)$caller_number);
+  $node->field_idea_type['und'][0]['value'] = 'Voice';
   // create the node
   node_save($node);
   $nid = $node->nid;
@@ -58,9 +59,10 @@ function _pbb_save_idea_sms($idea_category, $idea_location, $idea_description, $
   $node->language = 'und';
   $node->status = 1;
   $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
-  $node->field_caller_id['und'][0]['value'] = (string)$caller_number;
+  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string)$caller_number);
   $node->field_idea_location['und'][0]['value'] = $idea_location;
   $node->field_idea_description['und'][0]['value'] = $idea_description;
+  $node->field_idea_type['und'][0]['value'] = 'Sms';
   // create the node
   node_save($node);
   $nid = $node->nid;
