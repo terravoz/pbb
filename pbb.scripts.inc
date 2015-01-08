@@ -88,11 +88,20 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 
       $script->addLabel('get_information');
       //@todo: implement subscribe/unsubscribe here too
-      $script->addGetInput(v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
+      if($phone_number) {
+        //We should recognize an existing caller id and offer the option to unsubscribe right from the main menu.
+        $sms_subscribe_msg = v('To unsubscribe from our contact list for text message updates, press 2.');
+      }
+      else {
+        $sms_subscribe_msg = v('If you would like to receive text message updates about Youth Lead the Change, press 2.');
+      }
+      $prompt = array();
+      $prompt[] = v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
 Youth Lead the Change-Participatory Budgeting Boston  is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
-In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May!
- If you would like to receive text message updates about Youth Lead the Change, press 2.
-To go back to the main menu, press the pound key.'), 1);
+In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May! ');
+      $prompt[] = v($sms_subscribe_msg);
+      $prompt[] = v('To go back to the main menu, press the pound key.');
+      $script->addGetInput($prompt, 1);
       $script->addGotoIf('sms_subscription', "^%input_digits == '2'");
       $script->addGoto('options_menu');
 
