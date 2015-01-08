@@ -147,7 +147,8 @@ To go back to the main menu, press the pound key.'), 1);
       $script->addSendText($text, $signup_number);
       $script->addLabel('message');
       $script->addSay($voice_message);
-      $script->addReturn();
+      $script->addGosub('pbb_main_menu', $options);
+      //$script->addReturn();
       break;
 
     case 'propose_idea_script':
