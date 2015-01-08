@@ -186,15 +186,14 @@ To go back to the main menu, press the pound key.'), 1);
       $prompt[] = v("You selected");
       $prompt[] = v("%category_name");
       $prompt[] = v("To accept this category, press 1. To choose a different category, press 2.");
-      $script->addGotoIf('setcategory', "^%input_digits == '1'");
-      $script->addGotoIf('options_menu', "^%input_digits == '2'");
-      $script->addSay(v('Oops! That option is invalid. '));
-      $script->addGoto('confirm_category');
-
       $timeout = 5;
       $end_key = '';
       $num_digits = 1;
       $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
+      $script->addGotoIf('setcategory', "^%input_digits == '1'");
+      $script->addGotoIf('options_menu', "^%input_digits == '2'");
+      $script->addSay(v('Oops! That option is invalid. '));
+      $script->addGoto('confirm_category');
 
       $script->addLabel('setcategory');
       $script->addSet('idea_category', '%input_digits');
