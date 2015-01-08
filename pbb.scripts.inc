@@ -87,6 +87,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addGoto('options_menu');
 
       $script->addLabel('get_information');
+      //@todo: implement subscribe/unsubscribe here too
       $script->addGetInput(v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
 Youth Lead the Change-Participatory Budgeting Boston  is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
 In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May!
@@ -212,7 +213,7 @@ To go back to the main menu, press the pound key.'), 1);
       $script->addLabel('confirm_location');
       $prompt = array();
       $prompt[] = v("You said");
-      $prompt[] = ("%recording_public_url");
+      $prompt[] = new VoipPrompt("%recording_public_url");
       $prompt[] = v("To confirm this location, press 1. To record it once again, press 2.");
       $timeout = 5;
       $end_key = '';
