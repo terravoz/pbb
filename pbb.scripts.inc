@@ -31,7 +31,9 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addSay(v("Hi, thank you for calling Youth Lead the Change!"));
 
       //@todo: implement check if this is inbound or outbound call
-      $options['signup_number'] = '%caller_number';
+      $options['direction'] = '%direction';
+      $options['dest_number'] = '%dest_number';
+      $options['caller_number'] = '%caller_number';
       $script->addGosub('pbb_main_menu', $options);
       break;
     case 'pbb_main_menu':
@@ -40,7 +42,15 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
-      $signup_number = VoipCall::NormalizeNumber($options['signup_number']);
+      if($options['direction'] == 'inbound') {
+        $signup_number = VoipCall::NormalizeNumber($options['caller_number']);
+      }
+      else {
+        $signup_number = VoipCall::NormalizeNumber($options['dest_number']);
+      }
+
+      $options['signup_number'] = $signup_number;
+
       watchdog('debug', 'signup number ' . $signup_number);
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
 
@@ -82,7 +92,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addGoto('options_menu');
 
       $script->addLabel('sms_subscription');
-      $options['signup_number'] = '%caller_number';
       $script->addGosub('pbb_sms_subscription_menu', $options);
       $script->addGoto('options_menu');
 
@@ -97,7 +106,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       }
       $prompt = array();
       $prompt[] = v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
-Youth Lead the Change-Participatory Budgeting Boston  is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
+Youth Lead the Change-Participatory Budgeting Boston is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
 In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May! ');
       $prompt[] = $sms_subscribe_msg;
       $prompt[] = v('To go back to the main menu, press the pound key.');
@@ -125,10 +134,8 @@ In participatory budgeting, residents brainstorm ideas for community improvement
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
-      $signup_number = VoipCall::NormalizeNumber($options['signup_number']);
-      watchdog('debug', 'signup number ' . $signup_number);
+      $signup_number = $options['signup_number'];
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
-      watchdog('debug', 'voipnumber  ' . print_r($phone_number, TRUE));
       if ($phone_number) {
         //Number already exists unsubscribe it
         node_delete($phone_number[0]->getEid());
