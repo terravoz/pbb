@@ -182,6 +182,7 @@ To go back to the main menu, press the pound key.'), 1);
       $script->addLabel('confirm_category');
       $script->addSet('category_name', "^_pbb_get_category_name(%input_digits)");
 
+      $prompt = array();
       $prompt[] = v("You selected");
       $prompt[] = v("%category_name");
       $prompt[] = v("To accept this category, press 1. To choose a different category, press 2.");
@@ -210,6 +211,7 @@ To go back to the main menu, press the pound key.'), 1);
       $script->addRecord($prompt, $timeout, $end_key, $max_length, $format);
 
       $script->addLabel('confirm_location');
+      $prompt = array();
       $prompt[] = v("You said");
       $prompt[] = ("%recording_public_url");
       $prompt[] = v("To confirm this location, press 1. To record it once again, press 2.");
