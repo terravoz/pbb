@@ -8,16 +8,16 @@ function _pbb_save_idea($idea_category, $idea_location, $idea_recording, $caller
   watchdog('debug', "in _pbb_save_idea $idea_category, $idea_location, $idea_recording, $caller_number, $source");
 
   $node->type = 'ideas';
-  $node->title = $idea_category.' at '.REQUEST_TIME;
+  $node->title = $idea_category . ' at ' . REQUEST_TIME;
   $node->language = 'und';
   $node->status = 1;
   $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
-  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string)$caller_number);
+  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string) $caller_number);
   $node->field_idea_type['und'][0]['value'] = 'Voice';
   // create the node
   node_save($node);
   $nid = $node->nid;
-  watchdog('debug', 'Idea saved '.$nid);
+  watchdog('debug', 'Idea saved ' . $nid);
 
   $server = VoipServer::getServer($source);
   $args = array(
@@ -28,11 +28,11 @@ function _pbb_save_idea($idea_category, $idea_location, $idea_recording, $caller
 }
 
 function _pbb_save_idea_location($file, $recording_public_url, $args) {
-  watchdog('debug', 'in _pbb_save_idea_location '.print_r($args,true));
+  watchdog('debug', 'in _pbb_save_idea_location ' . print_r($args, TRUE));
 
   $node = node_load($args['nid']);
   $file->display = 1;
-  $node->field_idea_location_audio['und'][0] = (array)$file;
+  $node->field_idea_location_audio['und'][0] = (array) $file;
 
   // update the node
   node_save($node);
@@ -40,11 +40,11 @@ function _pbb_save_idea_location($file, $recording_public_url, $args) {
 }
 
 function _pbb_save_idea_recording($file, $recording_public_url, $args) {
-  watchdog('debug', 'in _pbb_save_idea_recording '.print_r($args,true));
+  watchdog('debug', 'in _pbb_save_idea_recording ' . print_r($args, TRUE));
 
   $node = node_load($args['nid']);
   $file->display = 1;
-  $node->field_idea_description_audio['und'][0] = (array)$file;
+  $node->field_idea_description_audio['und'][0] = (array) $file;
 
   // update the node
   node_save($node);
@@ -55,18 +55,18 @@ function _pbb_save_idea_sms($idea_category, $idea_location, $idea_description, $
   watchdog('debug', "in _pbb_save_idea $idea_category, $idea_location, $idea_description, $caller_number");
 
   $node->type = 'ideas';
-  $node->title = $idea_category.' at '.REQUEST_TIME;
+  $node->title = $idea_category . ' at ' . REQUEST_TIME;
   $node->language = 'und';
   $node->status = 1;
   $node->field_idea_category['und'][0]['value'] = $idea_category; //verify
-  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string)$caller_number);
+  $node->field_caller_id['und'][0]['value'] = VoipCall::NormalizeNumber((string) $caller_number);
   $node->field_idea_location['und'][0]['value'] = $idea_location;
   $node->field_idea_description['und'][0]['value'] = $idea_description;
   $node->field_idea_type['und'][0]['value'] = 'Sms';
   // create the node
   node_save($node);
   $nid = $node->nid;
-  watchdog('debug', 'Idea saved '.$nid);
+  watchdog('debug', 'Idea saved ' . $nid);
 }
 
 /**
@@ -81,4 +81,15 @@ function pbb_sms_actions() {
     ),
   );
   return $sms_actions;
+}
+
+function _pbb_categories() {
+  return array(
+    1 => 'Schools & Education',
+    2 => 'Streets & Transportation & Community Safety',
+    3 => 'Arts & Culture',
+    4 => 'Parks & Environment',
+    5 => 'Community Centers',
+    6 => 'Libraries',
+  );
 }
