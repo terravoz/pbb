@@ -129,7 +129,7 @@ function pbb_settings_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'sms_actions_opt_message';
-  $strongarm->value = 'Callblast App would like to send you SMS reminders @ this number. X/week. H for help. S to end. Msg&data rates may apply. Reply J to confirm today.';
+  $strongarm->value = 'PBB would like to send you SMS reminders at this number. H for help. S to end. Msg&data rates may apply. Reply J to confirm today.';
   $export['sms_actions_opt_message'] = $strongarm;
 
   $strongarm = new stdClass();
