@@ -137,12 +137,14 @@ In participatory budgeting, residents brainstorm ideas for community improvement
       $signup_number = $options['signup_number'];
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
       if ($phone_number) {
+        watchdog('debug', 'removing '.$phone_number[0]->getEid());
         //Number already exists unsubscribe it
         node_delete($phone_number[0]->getEid());
         $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
         $voice_message = v('Your number has been successfully removed from our text message reminders. ');
       }
       else {
+        watchdog('debug', 'adding '.$signup_number);
         //New number, subscribe it
         $node->type = 'phone_number';
         $node->title = $signup_number;
