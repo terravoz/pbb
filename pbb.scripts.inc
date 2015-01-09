@@ -173,9 +173,9 @@ In participatory budgeting, residents brainstorm ideas for community improvement
         $tmp = wordwrap($text, 160, '\n');
         $text_array = explode('\n', $tmp);
       }
-      foreach($text_array as $text) {
+      /*foreach($text_array as $text) {
         $script->addSendText($text, $signup_number);
-      }
+      }*/
       $script->addLabel('message');
       $script->addSay($voice_message);
       $script->addGosub('pbb_main_menu', $options);
