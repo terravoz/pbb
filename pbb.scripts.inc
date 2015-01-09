@@ -163,6 +163,7 @@ In participatory budgeting, residents brainstorm ideas for community improvement
 
       //@todo: SMS resource in Voice call can't be longer than 160 characters
       // send response in chunks of 160 characteres
+      $text_array = array();
       if(strlen($text) <= 160) {
         $text_array[] = $text;
       }
