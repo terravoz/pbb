@@ -163,19 +163,11 @@ In participatory budgeting, residents brainstorm ideas for community improvement
       You will now receive reminders to contribute ideas and join Youth Lead the Change events!');
       }
 
-      //@todo: SMS resource in Voice call can't be longer than 160 characters
-      // send response in chunks of 160 characteres
-      $text_array = array();
-      if(strlen($text) <= 160) {
-        $text_array[] = $text;
-      }
-      else {
-        $tmp = wordwrap($text, 160, '\n');
-        $text_array = explode('\n', $tmp);
-      }
-      /*foreach($text_array as $text) {
-        $script->addSendText($text, $signup_number);
-      }*/
+      //Send response
+      $call = new VoipCall();
+      $call->setDestNumber($signup_number);
+      voip_text($text, $call);
+
       $script->addLabel('message');
       $script->addSay($voice_message);
       $script->addGosub('pbb_main_menu', $options);
