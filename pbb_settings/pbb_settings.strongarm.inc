@@ -78,7 +78,7 @@ function pbb_settings_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'site_name';
-  $strongarm->value = 'Participatory Budgeting Boston (+1 401-305-4655)';
+  $strongarm->value = 'Participatory Budgeting Boston (+1 401-227-7882)';
   $export['site_name'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -136,7 +136,7 @@ function pbb_settings_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'sms_actions_sms_duplicate';
-  $strongarm->value = 'Unknown command.';
+  $strongarm->value = 'Number already registered.';
   $export['sms_actions_sms_duplicate'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -185,7 +185,7 @@ function pbb_settings_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'voipcall_cid_number';
-  $strongarm->value = '+14013054655';
+  $strongarm->value = '+14012277882';
   $export['voipcall_cid_number'] = $strongarm;
 
   $strongarm = new stdClass();
@@ -235,9 +235,9 @@ function pbb_settings_strongarm() {
   $strongarm->api_version = 1;
   $strongarm->name = 'voip_twilio_settings';
   $strongarm->value = array(
-    'voiptwilio_account_sid' => 'AC1a00ce6faba6d8a45ad3eaef0cfea187',
-    'voiptwilio_auth_token' => 'dba89f8ab3674ae35cd215462d11af19',
-    'form_build_id' => 'form-NK8MWuC_44_4u4UmXEAhUCx_S5wmcQWAepe-s3--E64',
+    'voiptwilio_account_sid' => 'AC6db4e788b04ccd21ad6c06eb72a4aecd',
+    'voiptwilio_auth_token' => '266f1959b22ac77b360f03e31fd707ed',
+    'form_build_id' => 'form-nBfeF4WGkogs_Yd1kl2O5UdNNFVkez_36AfxrM8HG4A',
   );
   $export['voip_twilio_settings'] = $strongarm;
 

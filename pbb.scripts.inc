@@ -341,11 +341,9 @@ In participatory budgeting, residents brainstorm ideas for community improvement
 function _pbb_validate_idea_category($category_selected) {
   $category_selected = (int) $category_selected;
   if ($category_selected >= 1 && $category_selected <= 6) {
-    watchdog('debug', 'returning true');
     return TRUE;
   }
   else {
-    watchdog('debug', 'returning false');
     return FALSE;
   }
 }
