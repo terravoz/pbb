@@ -10,6 +10,7 @@
  */
 function pbb_voipscript_get_script_names() {
   $script_names[] = 'pbb_welcome_script';
+  $script_names[] = 'pbb_test_hangup';
   return $script_names;
 }
 
@@ -21,6 +22,14 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
   $script = NULL;
   switch ($script_name) {
     default:
+      break;
+    case 'pbb_test_hangup':
+      $script = new VoipScript('pbb_test_hangup');
+      //Set function to be called upon hangup
+      $script->addSet('voipscript_hangup_callback', 'pbb_hangup_test');
+      $script->addSay('About to hang up the current script to execute its associated callback function. The system should be calling you in about 10 seconds after the hang up.');
+      $script->addBeep();
+      $script->addHangup();
       break;
     case 'pbb_welcome_script':
       $script = new VoipScript('pbb_welcome_script');
@@ -352,4 +361,8 @@ function _pbb_get_category_name($category_selected) {
   $category_selected = (int) $category_selected;
   $categories = _pbb_categories();
   return $categories[$category_selected];
+}
+
+function pbb_hangup_test() {
+  watchdog('debug', 'in pbb_hangup_test');
 }
