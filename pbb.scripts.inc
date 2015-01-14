@@ -134,6 +134,7 @@ To go back to the main menu, press the pound key. ');
       $script->addGoto('hang_up');
 
       $script->addLabel('hang_up');
+      $script->addSay(v('Thank you for calling Youth Lead the Change. Goodbye! '));
       $script->addHangup();
       break;
 
@@ -239,6 +240,7 @@ To go back to the main menu, press the pound key. ');
 
       $prompt = array();
       $prompt[] = v("You selected");
+      //@todo: implement using arguments?
       $prompt[] = v("%category_name");
       $prompt[] = v("To accept this category, press 1. To choose a different category, press 2.");
       $timeout = 5;
