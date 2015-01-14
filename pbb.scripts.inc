@@ -51,7 +51,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 
       $options['signup_number'] = $signup_number;
 
-      watchdog('debug', 'signup number ' . $signup_number.' time'.time());
       /*   $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
 
          if($phone_number) {
@@ -78,7 +77,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
         '4' => 'propose_idea',
         '0' => 'redirect',
         '*' => 'repeat',
-        '#' => 'invalid_option',
+        '#' => 'hang_up',
         'i' => 'invalid_option',
         't' => 'invalid_option'
       );
@@ -104,7 +103,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addGoto('options_menu');
 
       $script->addLabel('get_information');
-      //@todo: implement subscribe/unsubscribe here too
       /*if($phone_number) {
         //We should recognize an existing caller id and offer the option to unsubscribe right from the main menu.
         $sms_subscribe_msg = v('To unsubscribe from our contact list for text message updates, press 2.');
