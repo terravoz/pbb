@@ -257,7 +257,7 @@ To go back to the main menu, press the pound key. ');
       //Record location
       $script->addLabel('start_recording_location');
 
-      $prompt = t("Now please name the neighborhood and the streets or intersection for which your idea applies. When you are finished, press #. ");
+      $prompt = v("Now please name the neighborhood and the streets or intersection for which your idea applies. When you are finished, press #. ");
       $timeout = 5;
       $end_key = '#';
       $max_length = 200;
@@ -287,7 +287,7 @@ To go back to the main menu, press the pound key. ');
       $script->addLabel('start_recording_idea');
       $script->addLog('About to start recording (%voipscript_hangup_callback)');
 
-      $prompt = t("Now please say describe your idea in up to 45 seconds. When you are finished, press #. ");
+      $prompt = v("Now please say describe your idea in up to 45 seconds. When you are finished, press #. ");
       $timeout = 5;
       $end_key = '#';
       $max_length = 45;
