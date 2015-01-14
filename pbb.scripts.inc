@@ -10,7 +10,6 @@
  */
 function pbb_voipscript_get_script_names() {
   $script_names[] = 'pbb_welcome_script';
-  $script_names[] = 'pbb_test_hangup';
   return $script_names;
 }
 
@@ -22,14 +21,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
   $script = NULL;
   switch ($script_name) {
     default:
-      break;
-    case 'pbb_test_hangup':
-      $script = new VoipScript('pbb_test_hangup');
-      //Set function to be called upon hangup
-      $script->addSet('voipscript_hangup_callback', 'pbb_hangup_test');
-      $script->addSay('About to hang up the current script to execute its associated callback function. The system should be calling you in about 10 seconds after the hang up.');
-      $script->addBeep();
-      $script->addHangup();
       break;
     case 'pbb_welcome_script':
       $script = new VoipScript('pbb_welcome_script');
@@ -61,26 +52,30 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $options['signup_number'] = $signup_number;
 
       watchdog('debug', 'signup number ' . $signup_number.' time'.time());
-      $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
+      /*   $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
 
-      if($phone_number) {
-        //We should recognize an existing caller id and offer the option to unsubscribe right from the main menu.
-        $sms_subscribe_msg = v('To unsubscribe from our contact list for text message updates, press 2.');
-      }
-      else {
-        $sms_subscribe_msg = v('To enroll in our contact list for text message updates, press 2.');
-      }
+         if($phone_number) {
+           //We should recognize an existing caller id and offer the option to unsubscribe right from the main menu.
+           $sms_subscribe_msg = v('To unsubscribe from our contact list for text message updates, press 2.');
+         }
+         else {
+           $sms_subscribe_msg = v('To enroll in our contact list for text message updates, press 2.');
+         }*/
 
-      $p_options_menu[] = v("Main menu. To learn more about Youth Lead the Change and Participatory Budgeting, press 1. ");
-      $p_options_menu[] = $sms_subscribe_msg;
-      $p_options_menu[] = v("To contribute your project idea to improve the city of Boston, press 3.
+      //$p_options_menu[] = v("Main menu. To learn more about Youth Lead the Change and Participatory Budgeting, press 1. ");
+      //$p_options_menu[] = $sms_subscribe_msg;
+      $p_options_menu[] = v("Main menu. To learn more about Youth Lead the Change and Participatory Budgeting, press 1.
+      To enroll in our contact list for text message updates, press 2.
+      To unsubscribe from our contact list for text message updates, press 3.
+      To contribute your project idea to improve the city of Boston, press 4.
       To be redirected to our Boston Youth Lead the Change headquarters, press 0.
       To repeat this message, press the star key.");
 
       $input_options = array(
         '1' => 'get_information',
         '2' => 'sms_subscription',
-        '3' => 'propose_idea',
+        '3' => 'sms_unsubscribe',
+        '4' => 'propose_idea',
         '0' => 'redirect',
         '*' => 'repeat',
         '#' => 'invalid_option',
@@ -104,21 +99,27 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $script->addGosub('pbb_sms_subscription_menu', $options);
       $script->addGoto('options_menu');
 
+      $script->addLabel('sms_unsubscribe');
+      $script->addGosub('pbb_sms_unsubscribe_menu', $options);
+      $script->addGoto('options_menu');
+
       $script->addLabel('get_information');
       //@todo: implement subscribe/unsubscribe here too
-      if($phone_number) {
+      /*if($phone_number) {
         //We should recognize an existing caller id and offer the option to unsubscribe right from the main menu.
         $sms_subscribe_msg = v('To unsubscribe from our contact list for text message updates, press 2.');
       }
       else {
         $sms_subscribe_msg = v('If you would like to receive text message updates about Youth Lead the Change, press 2.');
-      }
+      }*/
       $prompt = array();
       $prompt[] = v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
 Youth Lead the Change-Participatory Budgeting Boston is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
-In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May! ');
-      $prompt[] = $sms_subscribe_msg;
-      $prompt[] = v('To go back to the main menu, press the pound key.');
+In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May!
+If you would like to receive text message updates about Youth Lead the Change, press 2.
+To go back to the main menu, press the pound key. ');
+      //$prompt[] = $sms_subscribe_msg;
+      //$prompt[] = v('To go back to the main menu, press the pound key.');
       $script->addGetInput($prompt, 1);
       $script->addGotoIf('sms_subscription', "^%input_digits == '2'");
       $script->addGoto('options_menu');
@@ -138,13 +139,14 @@ In participatory budgeting, residents brainstorm ideas for community improvement
       $script->addHangup();
       break;
 
-    case 'pbb_sms_subscription_menu':
-      $script = new VoipScript('pbb_sms_subscription_menu');
+    case 'pbb_sms_unsubscribe_menu':
+      $script = new VoipScript('pbb_sms_unsubscribe_menu');
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
       $signup_number = $options['signup_number'];
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
+
       if ($phone_number) {
         watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
         //Number already exists unsubscribe it
@@ -152,8 +154,31 @@ In participatory budgeting, residents brainstorm ideas for community improvement
         $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
         $voice_message = v('Your number has been successfully removed from our text message reminders. ');
       }
-      else {
-        watchdog('debug', 'adding '.$signup_number.' time'.time());
+
+      //Send response
+      $call = new VoipCall();
+      $call->setDestNumber($signup_number);
+      voip_text($text, $call);
+
+      $script->addLabel('message');
+      $script->addSay($voice_message);
+      $script->addReturn();
+      break;
+    case 'pbb_sms_subscription_menu':
+      $script = new VoipScript('pbb_sms_subscription_menu');
+      $voice = $options['voice'];
+      voipvoice_set_current_voice($voice);
+
+      $signup_number = $options['signup_number'];
+      /*$phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
+      if ($phone_number) {
+        watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
+        //Number already exists unsubscribe it
+        node_delete($phone_number[0]->getEid());
+        $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
+        $voice_message = v('Your number has been successfully removed from our text message reminders. ');
+      }
+      else {*/
         //New number, subscribe it
         $node->type = 'phone_number';
         $node->title = $signup_number;
@@ -170,7 +195,7 @@ In participatory budgeting, residents brainstorm ideas for community improvement
         $text = variable_get('sms_actions_sms_welcome', 'Welcome to Participatory Budgeting Boston.');
         $voice_message = v('Great! Your number has been successfully added to our text message reminders.
       You will now receive reminders to contribute ideas and join Youth Lead the Change events!');
-      }
+      //}
 
       //Send response
       $call = new VoipCall();
@@ -179,8 +204,8 @@ In participatory budgeting, residents brainstorm ideas for community improvement
 
       $script->addLabel('message');
       $script->addSay($voice_message);
-      $script->addGosub('pbb_main_menu', $options);
-      //$script->addReturn();
+      //$script->addGosub('pbb_main_menu', $options);
+      $script->addReturn();
       break;
 
     case 'propose_idea_script':
@@ -361,8 +386,4 @@ function _pbb_get_category_name($category_selected) {
   $category_selected = (int) $category_selected;
   $categories = _pbb_categories();
   return $categories[$category_selected];
-}
-
-function pbb_hangup_test() {
-  watchdog('debug', 'in pbb_hangup_test');
 }
