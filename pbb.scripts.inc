@@ -27,10 +27,6 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $options['voice'] = 'pbb-english';
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
-
-      $script->addSay(v("Hi, thank you for calling Youth Lead the Change!"));
-
-      //@todo: implement check if this is inbound or outbound call
       $options['direction'] = '%direction';
       $options['dest_number'] = '%dest_number';
       $options['caller_number'] = '%caller_number';
@@ -63,7 +59,8 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
 
       //$p_options_menu[] = v("Main menu. To learn more about Youth Lead the Change and Participatory Budgeting, press 1. ");
       //$p_options_menu[] = $sms_subscribe_msg;
-      $p_options_menu[] = v("Main menu. To learn more about Youth Lead the Change and Participatory Budgeting, press 1.
+      $p_options_menu[] = v("Hi, thank you for calling Youth Lead the Change!.
+      To learn more about Youth Lead the Change and Participatory Budgeting, press 1.
       To enroll in our contact list for text message updates, press 2.
       To unsubscribe from our contact list for text message updates, press 3.
       To contribute your project idea to improve the city of Boston, press 4.
