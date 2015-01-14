@@ -212,25 +212,24 @@ To go back to the main menu, press the pound key. ');
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
-      $script->addLabel('start');
-      $script->addSay(v('Great! Remember, ideas have to be for physical projects to improve the city of Boston.
-      Ideas should not be for programs and services. '));
       $script->addLabel('options_menu');
-      $prompt = v("If your idea is for Schools and Education projects, press 1.
+      $prompt = v("Great! Remember, ideas have to be for physical projects to improve the city of Boston.
+      Ideas should not be for programs and services.
+      If your idea is for Schools and Education projects, press 1.
   If it is for Streets and Transportation and Community Safety projects, press 2.
   If it is for Arts and Culture projects, press 3.
   If it is Parks and Environment projects press 4.
   If it is for Community Centers projects press 5.
   If it is for Libraries projects press 6.
-  To hear these options again, press the star key. To go back to the main menu, press the pound key.");
+  To hear these options again, press the 8. ");
       $timeout = 5;
       $end_key = '';
       $num_digits = 1;
       $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
 
       $script->addGotoIf('confirm_category', "^_pbb_validate_idea_category(%input_digits)");
-      $script->addGotoIf('options_menu', "^%input_digits == '*'");
-      $script->addGotoIf('go_back', "^%input_digits == '#'");
+      $script->addGotoIf('options_menu', "^%input_digits == '8'");
+      //$script->addGotoIf('go_back', "^%input_digits == '#'");
 
       $script->addSay(v('Oops! That option is invalid. '));
       $script->addGoto('options_menu');
