@@ -1,5 +1,5 @@
 <?php
-
+//todo: get item $this->title = $call->getDestNumber() . ':' . $cid;
 foreach (array('pbb.scripts.inc') as $file) {
   require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . $file);
 }
@@ -92,4 +92,15 @@ function _pbb_categories() {
     5 => 'Community Centers',
     6 => 'Libraries',
   );
+}
+
+/**
+ * Implementation of hook_voip_event().
+ */
+function pbb_voip_event($call, $status) {
+  watchdog('debug', 'in voip event'.print_r($call,true));
+  switch($status) {
+    case VoipEvent::BUSY:
+      break;
+  }
 }
