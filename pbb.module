@@ -93,14 +93,3 @@ function _pbb_categories() {
     6 => 'Libraries',
   );
 }
-
-/**
- * Implementation of hook_voip_event().
- */
-function pbb_voip_event($call, $status) {
-  watchdog('debug', 'in voip event'.print_r($call,true));
-  switch($status) {
-    case VoipEvent::BUSY:
-      break;
-  }
-}
