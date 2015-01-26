@@ -168,15 +168,8 @@ To go back to the main menu, press the pound key. ');
       voipvoice_set_current_voice($voice);
 
       $signup_number = $options['signup_number'];
-      /*$phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
-      if ($phone_number) {
-        watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
-        //Number already exists unsubscribe it
-        node_delete($phone_number[0]->getEid());
-        $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
-        $voice_message = v('Your number has been successfully removed from our text message reminders. ');
-      }
-      else {*/
+      $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
+      if(!$phone_number) {
         //New number, subscribe it
         $node->type = 'phone_number';
         $node->title = $signup_number;
@@ -188,6 +181,16 @@ To go back to the main menu, press the pound key. ');
         $node->field_language['und'][0]['value'] = $language;
         // create the node
         node_save($node);
+      }
+      /*if ($phone_number) {
+        watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
+        //Number already exists unsubscribe it
+        node_delete($phone_number[0]->getEid());
+        $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
+        $voice_message = v('Your number has been successfully removed from our text message reminders. ');
+      }
+      else {*/
+
 
         //send welcome message
         $text = variable_get('sms_actions_sms_welcome', 'Welcome to Participatory Budgeting Boston.');
