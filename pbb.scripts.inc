@@ -123,7 +123,7 @@ To go back to the main menu, press the pound key. ');
 
       $script->addLabel('redirect');
       //$script->addSay(v('Your call will now be redirected to Boston HQ. '));
-      //$script->addDial('+16466993989');
+      $script->addDial('+16176354202');
       $script->addGoto('hang_up');
 
       $script->addLabel('repeat');
@@ -146,7 +146,6 @@ To go back to the main menu, press the pound key. ');
       $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
 
       if ($phone_number) {
-        watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
         //Number already exists unsubscribe it
         node_delete($phone_number[0]->getEid());
         $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
