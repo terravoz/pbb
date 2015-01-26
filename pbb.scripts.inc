@@ -241,27 +241,27 @@ To go back to the main menu, press the pound key. ');
 
       $script->addLabel('category_1');
       $script->addGetInput(v('You selected Schools and Education. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
       $script->addLabel('category_2');
       $script->addGetInput(v('You selected Streets and Transportation. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
       $script->addLabel('category_3');
       $script->addGetInput(v('You selected Arts and Culture. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
       $script->addLabel('category_4');
       $script->addGetInput(v('You selected Parks and Environment. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
       $script->addLabel('category_5');
       $script->addGetInput(v('You selected Community Centers. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
       $script->addLabel('category_6');
       $script->addGetInput(v('You selected Libraries. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
-      $script->addGoto('confirm_category');
+      $script->addGoto('accept_category');
 
 
       /*$prompt = array();
