@@ -122,7 +122,7 @@ To go back to the main menu, press the pound key. ');
       $script->addGoto('options_menu');
 
       $script->addLabel('redirect');
-      $script->addSay(v('Your call will now be redirected to Boston HQ. '));
+      //$script->addSay(v('Your call will now be redirected to Boston HQ. '));
       //$script->addDial('+16466993989');
       $script->addGoto('hang_up');
 
