@@ -78,7 +78,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
         'i' => 'invalid_option',
         't' => 'invalid_option'
       );
-      $p_invalid_msg = v('Oops! That option is invalid. ');
+      $p_invalid_msg = v('Invalid option selected. Please try again. ');
       $script->addRunIvrMenu($p_options_menu, $input_options, $p_invalid_msg);
       $script->addGoto('%ivr_option_selected');
 
@@ -111,12 +111,14 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       $prompt[] = v('Welcome to Youth Lead the Change, the only youth-led participatory budgeting process in the country!
 Youth Lead the Change-Participatory Budgeting Boston is an innovative democratic process that gives young people the power to decide how to spend one million dollars in capital funds to improve their city.
 In participatory budgeting, residents brainstorm ideas for community improvement projects, develop these ideas into full proposals, and then vote on a ballot for which projects will be funded and implemented. Anyone ages 12 to 25 that lives in Boston will be eligible to vote in May!
-If you would like to receive text message updates about Youth Lead the Change, press 2.
+If you would like to receive text message updates about Youth Lead the Change, press 1.
+To unsubscribe from the Youth Lead the Change message updates about, press 2.
 To go back to the main menu, press the pound key. ');
       //$prompt[] = $sms_subscribe_msg;
       //$prompt[] = v('To go back to the main menu, press the pound key.');
       $script->addGetInput($prompt, 1);
-      $script->addGotoIf('sms_subscription', "^%input_digits == '2'");
+      $script->addGotoIf('sms_subscription', "^%input_digits == '1'");
+      $script->addGotoIf('sms_unsubscribe', "^%input_digits == '2'");
       $script->addGoto('options_menu');
 
       $script->addLabel('redirect');
@@ -209,10 +211,10 @@ To go back to the main menu, press the pound key. ');
       $voice = $options['voice'];
       voipvoice_set_current_voice($voice);
 
+      $script->addSay(v("Great! Remember, ideas have to be for physical projects to improve the city of Boston.
+      Ideas should not be for programs and services. "));
       $script->addLabel('options_menu');
-      $prompt = v("Great! Remember, ideas have to be for physical projects to improve the city of Boston.
-      Ideas should not be for programs and services.
-      If your idea is for Schools and Education projects, press 1.
+      $prompt = v("If your idea is for Schools and Education projects, press 1.
   If it is for Streets and Transportation and Community Safety projects, press 2.
   If it is for Arts and Culture projects, press 3.
   If it is Parks and Environment projects press 4.
@@ -224,17 +226,45 @@ To go back to the main menu, press the pound key. ');
       $num_digits = 1;
       $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
 
-      $script->addGotoIf('confirm_category', "^_pbb_validate_idea_category(%input_digits)");
+      $script->addGotoIf('category_validated', "^_pbb_validate_idea_category(%input_digits)");
       $script->addGotoIf('options_menu', "^%input_digits == '8'");
       //$script->addGotoIf('go_back', "^%input_digits == '#'");
 
-      $script->addSay(v('Oops! That option is invalid. '));
+      $script->addSay(v('Invalid option selected. Please try again. '));
       $script->addGoto('options_menu');
 
-      $script->addLabel('confirm_category');
-      $script->addSet('category_name', "^_pbb_get_category_name(%input_digits)");
+      $script->addLabel('category_validated');
+      $script->addSet('category_label', "category_%input_digits");
+      $script->addGoto('%category_label');
+      //$script->addLabel('confirm_category');
+      //$script->addSet('category_name', "^_pbb_get_category_name(%input_digits)");
 
-      $prompt = array();
+      $script->addLabel('category_1');
+      $script->addGetInput(v('You selected Schools and Education. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+      $script->addLabel('category_2');
+      $script->addGetInput(v('You selected Streets and Transportation. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+      $script->addLabel('category_3');
+      $script->addGetInput(v('You selected Arts and Culture. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+      $script->addLabel('category_4');
+      $script->addGetInput(v('You selected Parks and Environment. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+      $script->addLabel('category_5');
+      $script->addGetInput(v('You selected Community Centers. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+      $script->addLabel('category_6');
+      $script->addGetInput(v('You selected Libraries. To accept this category, press 1. To choose a different category, press 2.'), $num_digits, $end_key, $timeout);
+      $script->addGoto('confirm_category');
+
+
+      /*$prompt = array();
       $prompt[] = v("You selected");
       //@todo: implement using arguments?
       $prompt[] = v("%category_name");
@@ -242,11 +272,13 @@ To go back to the main menu, press the pound key. ');
       $timeout = 5;
       $end_key = '';
       $num_digits = 1;
-      $script->addGetInput($prompt, $num_digits, $end_key, $timeout);
+      $script->addGetInput($prompt, $num_digits, $end_key, $timeout);*/
+
+      $script->addLabel('accept_category');
       $script->addGotoIf('setcategory', "^%input_digits == '1'");
       $script->addGotoIf('options_menu', "^%input_digits == '2'");
-      $script->addSay(v('Oops! That option is invalid. '));
-      $script->addGoto('confirm_category');
+      $script->addSay(v('Invalid option selected. Please try again. '));
+      $script->addGoto('%category_label');
 
       $script->addLabel('setcategory');
       $script->addSet('idea_category', '%input_digits');
@@ -274,7 +306,7 @@ To go back to the main menu, press the pound key. ');
       $script->addGotoIf('set_idea_location', "^%input_digits == '1'");
       $script->addGotoIf('start_recording_location', "^%input_digits == '2'");
 
-      $script->addSay(v('Oops! That option is invalid. '));
+      $script->addSay(v('Invalid option selected. Please try again. '));
       $script->addGoto('confirm_location');
 
       $script->addLabel('set_idea_location');
@@ -302,7 +334,7 @@ To go back to the main menu, press the pound key. ');
       $script->addGotoIf('set_idea_description', "^%input_digits == '2'");
       $script->addGotoIf('start_recording_idea', "^%input_digits == '3'");
 
-      $script->addSay(v('Oops! That option is invalid. '));
+      $script->addSay(v('Invalid option selected. Please try again. '));
       $script->addGoto('confirm_description');
 
       $script->addLabel('listen_idea_description');
@@ -382,4 +414,8 @@ function _pbb_get_category_name($category_selected) {
   $category_selected = (int) $category_selected;
   $categories = _pbb_categories();
   return $categories[$category_selected];
+}
+
+function _pbb_get_category_label($category_selected) {
+  return 'category'.$category_selected;
 }
