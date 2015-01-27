@@ -61,20 +61,18 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       //$p_options_menu[] = $sms_subscribe_msg;
       $p_options_menu[] = v("Hi, thank you for calling Youth Lead the Change!.
       To learn more about Youth Lead the Change and Participatory Budgeting, press 1.
-      To enroll in our contact list for text message updates, press 2.
-      To unsubscribe from our contact list for text message updates, press 3.
-      To contribute your project idea to improve the city of Boston, press 4.
-      To be redirected to our Boston Youth Lead the Change headquarters, press 0.
-      To repeat this message, press the star key.");
+      To enroll in our contact list for text message updates, press 3.
+      To unsubscribe from our contact list for text message updates, press 4.
+      To contribute your project idea to improve the city of Boston, press 5.
+      To be redirected to our Boston Youth Lead the Change headquarters, press 0.");
 
       $input_options = array(
         '1' => 'get_information',
-        '2' => 'sms_subscription',
         '3' => 'sms_subscription',
         '4' => 'sms_unsubscribe',
         '5' => 'propose_idea',
         '0' => 'redirect',
-        '*' => 'repeat',
+        //'*' => 'repeat',
         '#' => 'hang_up',
         'i' => 'invalid_option',
         't' => 'invalid_option'
