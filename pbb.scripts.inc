@@ -147,14 +147,12 @@ To go back to the main menu, press the pound key. ');
       if ($phone_number) {
         //Number already exists unsubscribe it
         node_delete($phone_number[0]->getEid());
-        $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
-        $voice_message = v('Your number has been successfully removed from our text message reminders. ');
       }
 
-      //Send response
-      $call = new VoipCall();
-      $call->setDestNumber($signup_number);
-      voip_text($text, $call);
+      $script->addSet('callback_result',
+        '^_pbb_send_unsubscribe_sms(%signup_number)');
+
+      $voice_message = v('Your number has been successfully removed from our text message reminders. ');
 
       $script->addLabel('message');
       $script->addSay($voice_message);
@@ -180,30 +178,17 @@ To go back to the main menu, press the pound key. ');
         // create the node
         node_save($node);
       }
-      /*if ($phone_number) {
-        watchdog('debug', 'removing '.$phone_number[0]->getEid().' time'.time());
-        //Number already exists unsubscribe it
-        node_delete($phone_number[0]->getEid());
-        $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
-        $voice_message = v('Your number has been successfully removed from our text message reminders. ');
-      }
-      else {*/
-
 
         //send welcome message
-        $text = variable_get('sms_actions_sms_welcome', 'Welcome to Participatory Budgeting Boston.');
+      $script->addSet('callback_result',
+        '^_pbb_send_subscribe_sms(%signup_number)');
+
         $voice_message = v('Great! Your number has been successfully added to our text message reminders.
       You will now receive reminders to contribute ideas and join Youth Lead the Change events!');
       //}
 
-      //Send response
-      $call = new VoipCall();
-      $call->setDestNumber($signup_number);
-      voip_text($text, $call);
-
       $script->addLabel('message');
       $script->addSay($voice_message);
-      //$script->addGosub('pbb_main_menu', $options);
       $script->addReturn();
       break;
 
@@ -419,4 +404,22 @@ function _pbb_get_category_name($category_selected) {
 
 function _pbb_get_category_label($category_selected) {
   return 'category'.$category_selected;
+}
+
+function _pbb_send_unsubscribe_sms($signup_number) {
+  $text = variable_get('sms_actions_sms_unsubscribe', 'You\'ve unsubscribed from the Callblast App and should not receive further messages. Should you choose to subscribe again, text any letter to this number.');
+
+  //Send response
+  $call = new VoipCall();
+  $call->setDestNumber($signup_number);
+  return voip_text($text, $call);
+}
+
+function _pbb_send_subscribe_sms($signup_number) {
+  $text = variable_get('sms_actions_sms_welcome', 'Welcome to Participatory Budgeting Boston.');
+
+  //Send response
+  $call = new VoipCall();
+  $call->setDestNumber($signup_number);
+  return voip_text($text, $call);
 }
