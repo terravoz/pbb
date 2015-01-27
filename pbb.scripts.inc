@@ -44,7 +44,7 @@ function pbb_voipscript_load_script($script_name, $options = NULL) {
       else {
         $signup_number = VoipCall::NormalizeNumber($options['dest_number']);
       }
-
+      $script->addSet('signup_number', $signup_number);
       $options['signup_number'] = $signup_number;
 
       /*   $phone_number = VoipNumber::getVoipNumbersByNumber($signup_number, 'node', 'phone_number');
